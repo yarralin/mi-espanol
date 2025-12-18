@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Español - 我的西班牙文學習助手</title>
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --accent: #74b9ff;
+            --shadow: rgba(0,0,0,0.08);
+        }
+        body.dark {
+            --bg: #2d3436;
+            --card-bg: #363e42;
+            --text: #dfe6e9;
+            --accent: #0984e3;
+            --shadow: rgba(0,0,0,0.3);
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+        header {
+            background: var(--card-bg);
+            padding: 1rem;
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button.tab-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button.tab-btn.active {
+            border-bottom: 3px solid var(--accent);
+            color: var(--accent);
+        }
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .section {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+        .section.active {
+            display: block;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        select, input, button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .flashcard {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 30px auto;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow);
+        }
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        .front {
+            background: #ffeaa7;
+        }
+        .back {
+            background: #81ecec;
+            transform: rotateY(180deg);
+        }
+        .example {
+            font-size: 1rem;
+            margin-top: 20px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        .status-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .status-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        .learning { background: #fdcb6e; }
+        .review { background: #e17055; }
+        .mastered { background: #00b894; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: var(--accent);
+            color: white;
+        }
+        .note-item {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        #darkToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        @media (max-width: 600px) {
+            .flashcard { height: 250px; }
+            .card-face { font-size: 1.5rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mi Español</h1>
+        <nav>
+            <button class="tab-btn active" data-tab="flashcards">閃卡學習</button>
+            <button class="tab-btn" data-tab="review">複習測驗</button>
+            <button class="tab-btn" data-tab="conjugation">動詞變化</button>
+            <button class="tab-btn" data-tab="dialogues">對話練習</button>
+            <button class="tab-btn" data-tab="notes">我的筆記</button>
+            <button class="tab-btn" data-tab="importexport">匯入/匯出</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 閃卡學習 -->
+        <div id="flashcards" class="section active">
+            <div class="controls">
+                <select id="categorySelect">
+                    <option value="all">全部詞彙</option>
+                    <option value="greetings">問候語</option>
+                    <option value="daily">日常對話</option>
+                    <option value="numbers">數字</option>
+                    <option value="colors">顏色</option>
+                    <option value="family">家庭成員</option>
+                    <option value="food">食物</option>
+                    <option value="travel">旅行用語</option>
+                </select>
+                <select id="modeSelect">
+                    <option value="es-to-zh">西班牙文 → 中文</option>
+                    <option value="zh-to-es">中文 → 西班牙文</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="all">全部</option>
+                    <option value="learning">還在學</option>
+                    <option value="review">再複習</option>
+                    <option value="mastered">已掌握</option>
+                </select>
+            </div>
+            <div class="flashcard" id="flashcard">
+                <div class="card-inner">
+                    <div class="card-face front" id="cardFront"></div>
+                    <div class="card-face back" id="cardBack"></div>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <button id="prevCard">← 上一張</button>
+                <button id="nextCard">下一張 →</button>
+                <p id="progressText">第 1 / 1 張</p>
+            </div>
+            <div class="status-btns" style="justify-content:center;">
+                <button class="status-btn learning" data-status="learning">還在學</button>
+                <button class="status-btn review" data-status="review">再複習</button>
+                <button class="status-btn mastered" data-status="mastered">已掌握</button>
+            </div>
+        </div>
+
+        <!-- 複習測驗 -->
+        <div id="review" class="section">
+            <h2>填空複習測驗</h2>
+            <div id="quizQuestion"></div>
+            <input type="text" id="quizAnswer" placeholder="輸入你的答案" style="width:100%;max-width:400px;margin:20px 0;">
+            <button id="checkAnswer">檢查答案</button>
+            <p id="quizFeedback"></p>
+            <button id="nextQuiz">下一題</button>
+        </div>
+
+        <!-- 動詞變化 -->
+        <div id="conjugation" class="section">
+            <h2>動詞現在式變化查詢</h2>
+            <input type="text" id="verbInput" placeholder="輸入動詞原形（如 hablar, comer, vivir）">
+            <button id="conjugateBtn">查詢變化</button>
+            <div id="conjugationTable"></div>
+        </div>
+
+        <!-- 對話練習 -->
+        <div id="dialogues" class="section">
+            <h2>中西對照對話練習</h2>
+            <div id="dialogueList"></div>
+        </div>
+
+        <!-- 我的筆記 -->
+        <div id="notes" class="section">
+            <h2>我的學習筆記</h2>
+            <textarea id="newNote" placeholder="寫下你學到的單字、句子或文法筆記..." rows="4" style="width:100%;"></textarea>
+            <button id="saveNote">儲存筆記</button>
+            <div id="notesList"></div>
+        </div>
+
+        <!-- 匯入匯出 -->
+        <div id="importexport" class="section">
+            <h2>資料匯出與匯入</h2>
+            <button id="exportData">匯出所有資料（JSON）</button>
+            <br><br>
+            <input type="file" id="importFile" accept=".json">
+            <button id="importData">匯入資料</button>
+            <p style="font-size:0.9rem;margin-top:20px;">匯出後可備份到雲端或轉移到其他裝置</p>
+        </div>
+    </main>
+
+    <div id="darkToggle">🌙</div>
+
+    <footer>
+        Mi Español - 你的專屬西班牙文學習夥伴 | 所有資料儲存在本機瀏覽器
+    </footer>
+
+    <script>
+        // 初始詞彙庫（初級）
+        const initialVocabulary = [
+            // 問候語
+            { es: "Hola", zh: "你好", category: "greetings", example: "Hola, ¿cómo estás?" },
+            { es: "Buenos días", zh: "早安", category: "greetings", example: "Buenos días, señor." },
+            { es: "Buenas tardes", zh: "午安", category: "greetings" },
+            { es: "Buenas noches", zh: "晚安", category: "greetings" },
+            { es: "Adiós", zh: "再見", category: "greetings" },
+            { es: "¿Cómo estás?", zh: "你好嗎？", category: "greetings" },
+            { es: "Bien, gracias", zh: "很好，謝謝", category: "greetings" },
+            { es: "¿Y tú?", zh: "你呢？", category: "greetings" },
+
+            // 日常對話
+            { es: "Por favor", zh: "請", category: "daily" },
+            { es: "Gracias", zh: "謝謝", category: "daily" },
+            { es: "De nada", zh: "不客氣", category: "daily" },
+            { es: "Lo siento", zh: "對不起", category: "daily" },
+            { es: "Sí", zh: "是", category: "daily" },
+            { es: "No", zh: "不", category: "daily" },
+            { es: "Me llamo...", zh: "我叫...", category: "daily" },
+            { es: "¿Cómo te llamas?", zh: "你叫什麼名字？", category: "daily" },
+
+            // 數字 1-10
+            { es: "uno", zh: "一", category: "numbers" },
+            { es: "dos", zh: "二", category: "numbers" },
+            { es: "tres", zh: "三", category: "numbers" },
+            { es: "cuatro", zh: "四", category: "numbers" },
+            { es: "cinco", zh: "五", category: "numbers" },
+            { es: "seis", zh: "六", category: "numbers" },
+            { es: "siete", zh: "七", category: "numbers" },
+            { es: "ocho", zh: "八", category: "numbers" },
+            { es: "nueve", zh: "九", category: "numbers" },
+            { es: "diez", zh: "十", category: "numbers" },
+
+            // 顏色
+            { es: "rojo", zh: "紅色", category: "colors" },
+            { es: "azul", zh: "藍色", category: "colors" },
+            { es: "verde", zh: "綠色", category: "colors" },
+            { es: "amarillo", zh: "黃色", category: "colors" },
+            { es: "negro", zh: "黑色", category: "colors" },
+            { es: "blanco", zh: "白色", category: "colors" },
+
+            // 家庭成員
+            { es: "padre", zh: "爸爸", category: "family" },
+            { es: "madre", zh: "媽媽", category: "family" },
+            { es: "hermano", zh: "哥哥/弟弟", category: "family" },
+            { es: "hermana", zh: "姐姐/妹妹", category: "family" },
+            { es: "abuelo", zh: "爺爺", category: "family" },
+            { es: "abuela", zh: "奶奶", category: "family" },
+
+            // 食物
+            { es: "agua", zh: "水", category: "food" },
+            { es: "pan", zh: "麵包", category: "food" },
+            { es: "leche", zh: "牛奶", category: "food" },
+            { es: "arroz", zh: "米飯", category: "food" },
+            { es: "carne", zh: "肉", category: "food" },
+            { es: "fruta", zh: "水果", category: "food" },
+
+            // 旅行用語
+            { es: "¿Dónde está...?", zh: "...在哪裡？", category: "travel" },
+            { es: "el baño", zh: "廁所", category: "travel" },
+            { es: "la estación", zh: "車站", category: "travel" },
+            { es: "el hotel", zh: "飯店", category: "travel" },
+            { es: "la playa", zh: "海灘", category: "travel" },
+            { es: "¿Cuánto cuesta?", zh: "多少錢？", category: "travel" },
+        ];
+
+        // 對話練習
+        const dialogues = [
+            {
+                title: "在咖啡廳點餐",
+                content: [
+                    { es: "Buenos días. ¿Qué desea?", zh: "早安，您要點什麼？" },
+                    { es: "Un café con leche, por favor.", zh: "一杯拿鐵，謝謝。" },
+                    { es: "¿Algo más?", zh: "還要別的嗎？" },
+                    { es: "No, gracias. ¿Cuánto es?", zh: "不要了，謝謝。多少錢？" },
+                    { es: "Son cuatro euros.", zh: "四歐元。" },
+                    { es: "Aquí tiene. Gracias.", zh: "給您，謝謝。" }
+                ]
+            },
+            {
+                title: "自我介紹",
+                content: [
+                    { es: "Hola, me llamo Ana.", zh: "你好，我叫Ana。" },
+                    { es: "Encantado, soy Pablo. ¿De dónde eres?", zh: "很高興認識你，我是Pablo。你從哪裡來？" },
+                    { es: "Soy de Taiwán.", zh: "我來自台灣。" },
+                    { es: "¡Qué interesante! Bienvenido.", zh: "真有趣！歡迎。" }
+                ]
+            }
+        ];
+
+        // 主要資料儲存
+        let vocabulary = [];
+        let notes = [];
+        let currentCardIndex = 0;
+        let filteredCards = [];
+
+        // 初始化
+        function init() {
+            // 載入資料
+            const savedVocab = localStorage.getItem('espanolVocabulary');
+            const savedNotes = localStorage.getItem('espanolNotes');
+            const savedDark = localStorage.getItem('espanolDarkMode');
+
+            vocabulary = savedVocab ? JSON.parse(savedVocab) : initialVocabulary.map(item => ({
+                ...item,
+                status: 'learning',
+                correct: 0,
+                attempts: 0
+            }));
+            notes = savedNotes ? JSON.parse(savedNotes) : [];
+
+            if (savedDark === 'true') {
+                document.body.classList.add('dark');
+            }
+
+            setupEventListeners();
+            switchTab('flashcards');
+            renderDialogues();
+            renderNotes();
+        }
+
+        function setupEventListeners() {
+            // 切換頁籤
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelector('.tab-btn.active').classList.remove('active');
+                    btn.classList.add('active');
+                    switchTab(btn.dataset.tab);
+                });
+            });
+
+            // 深色模式
+            document.getElementById('darkToggle').addEventListener('click', () => {
+                document.body.classList.toggle('dark');
+                localStorage.setItem('espanolDarkMode', document.body.classList.contains('dark'));
+                document.getElementById('darkToggle').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+            });
+
+            // 閃卡相關
+            const card = document.querySelector('.card-inner');
+            card.addEventListener('click', () => card.classList.toggle('flipped'));
+
+            document.getElementById('prevCard').addEventListener('click', prevCard);
+            document.getElementById('nextCard').addEventListener('click', nextCard);
+
+            document.getElementById('categorySelect').addEventListener('change', filterCards);
+            document.getElementById('modeSelect').addEventListener('change', updateCurrentCard);
+            document.getElementById('statusFilter').addEventListener('change', filterCards);
+
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (filteredCards.length === 0) return;
+                    const card = filteredCards[currentCardIndex];
+                    card.status = btn.dataset.status;
+                    saveVocabulary();
+                    updateProgress();
+                    nextCard();
+                });
+            });
+
+            // 動詞變化
+            document.getElementById('conjugateBtn').addEventListener('click', conjugateVerb);
+
+            // 測驗
+            document.getElementById('checkAnswer').addEventListener('click', checkQuiz);
+            document.getElementById('nextQuiz').addEventListener('click', generateQuiz);
+
+            // 筆記
+            document.getElementById('saveNote').addEventListener('click', saveNote);
+
+            // 匯出匯入
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('importData').addEventListener('click', () => {
+                document.getElementById('importFile').click();
+            });
+            document.getElementById('importFile').addEventListener('change', importData);
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+
+            if (tab === 'flashcards') filterCards();
+            if (tab === 'review') generateQuiz();
+        }
+
+        function filterCards() {
+            const category = document.getElementById('categorySelect').value;
+            const status = document.getElementById('statusFilter').value;
+
+            filteredCards = vocabulary.filter(card => {
+                if (category !== 'all' && card.category !== category) return false;
+                if (status !== 'all' && card.status !== status) return false;
+                return true;
+            });
+
+            currentCardIndex = 0;
+            updateCurrentCard();
+            updateProgress();
+        }
+
+        function updateCurrentCard() {
+            if (filteredCards.length === 0) {
+                document.getElementById('cardFront').innerHTML = '<p>沒有符合條件的單字</p>';
+                document.getElementById('cardBack').innerHTML = '';
+                document.getElementById('progressText').textContent = '0 / 0';
+                return;
+            }
+
+            const card = filteredCards[currentCardIndex];
+            const mode = document.getElementById('modeSelect').value;
+            const front = mode === 'es-to-zh' ? card.es : card.zh;
+            const back = mode === 'es-to-zh' ? card.zh : card.es;
+
+            document.getElementById('cardFront').innerHTML = `
+                <div>${front}</div>
+                ${card.example ? `<div class="example">${card.example}</div>` : ''}
+            `;
+            document.getElementById('cardBack').innerHTML = `
+                <div>${back}</div>
+                <div style="font-size:0.8rem;margin-top:20px;">
+                    正確率: ${card.attempts > 0 ? Math.round(card.correct / card.attempts * 100) : 0}%
+                </div>
+            `;
+
+            document.querySelector('.card-inner').classList.remove('flipped');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            document.getElementById('progressText').textContent = 
+                `第 ${currentCardIndex + 1} / ${filteredCards.length} 張`;
+        }
+
+        function prevCard() {
+            if (filteredCards.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + filteredCards.length) % filteredCards.length;
+            updateCurrentCard();
+        }
+
+        function nextCard() {
+            if (filteredCards.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % filteredCards.length;
+            updateCurrentCard();
+        }
+
+        function saveVocabulary() {
+            localStorage.setItem('espanolVocabulary', JSON.stringify(vocabulary));
+        }
+
+        // 動詞變化規則（規則動詞）
+        function conjugateVerb() {
+            const verb = document.getElementById('verbInput').value.trim().toLowerCase();
+            if (!verb) return;
+
+            let root, ending;
+            if (verb.endsWith('ar')) {
+                root = verb.slice(0, -2);
+                ending = 'ar';
+            } else if (verb.endsWith('er')) {
+                root = verb.slice(0, -2);
+                ending = 'er';
+            } else if (verb.endsWith('ir')) {
+                root = verb.slice(0, -2);
+                ending = 'ir';
+            } else {
+                document.getElementById('conjugationTable').innerHTML = '<p>請輸入規則動詞原形（-ar, -er, -ir）</p>';
+                return;
+            }
+
+            const conjugations = ending === 'ar' ? 
+                ['o', 'as', 'a', 'amos', 'áis', 'an'] :
+                ['o', 'es', 'e', 'emos', 'éis', 'en'];
+
+            const pronouns = ['yo', 'tú', 'él/ella/usted', 'nosotros', 'vosotros', 'ellos/ellas/ustedes'];
+
+            let table = '<table><tr><th>人稱</th><th>' + verb + ' (現在式)</th></tr>';
+            pronouns.forEach((pronoun, i) => {
+                table += `<tr><td>${pronoun}</td><td>${root}${conjugations[i]}</td></tr>`;
+            });
+            table += '</table>';
+
+            document.getElementById('conjugationTable').innerHTML = table;
+        }
+
+        // 測驗
+        function generateQuiz() {
+            const reviewCards = vocabulary.filter(c => c.status === 'review' || c.status === 'learning');
+            if (reviewCards.length === 0) {
+                document.getElementById('quizQuestion').textContent = '沒有需要複習的單字！繼續學習新單字吧～';
+                return;
+            }
+
+            const card = reviewCards[Math.floor(Math.random() * reviewCards.length)];
+            const sentence = card.example || `${card.es} 的意思是什麼？`;
+            document.getElementById('quizQuestion').innerHTML = 
+                sentence.replace(card.es, '_____') + '<br><br>請填入正確的西班牙文：';
+
+            window.currentQuizCard = card;
+            document.getElementById('quizAnswer').value = '';
+            document.getElementById('quizFeedback').textContent = '';
+        }
+
+        function checkQuiz() {
+            const answer = document.getElementById('quizAnswer').value.trim().toLowerCase();
+            const card = window.currentQuizCard;
+            if (!card) return;
+
+            card.attempts++;
+            if (answer === card.es.toLowerCase()) {
+                card.correct++;
+                document.getElementById('quizFeedback').innerHTML = '<strong style="color:green;">正確！👍</strong>';
+                if (card.correct / card.attempts >= 0.8) {
+                    card.status = 'mastered';
+                }
+            } else {
+                document.getElementById('quizFeedback').innerHTML = 
+                    `<strong style="color:red;">不正確，正確答案是：${card.es}</strong>`;
+                card.status = 'review';
+            }
+            saveVocabulary();
+        }
+
+        // 對話練習
+        function renderDialogues() {
+            const container = document.getElementById('dialogueList');
+            container.innerHTML = dialogues.map(d => `
+                <div style="margin-bottom:30px;">
+                    <h3>${d.title}</h3>
+                    <table>
+                        ${d.content.map(line => 
+                            `<tr><td><strong>${line.es}</strong></td><td>${line.zh}</td></tr>`
+                        ).join('')}
+                    </table>
+                </div>
+            `).join('');
+        }
+
+        // 筆記
+        function saveNote() {
+            const content = document.getElementById('newNote').value.trim();
+            if (!content) return;
+
+            notes.unshift({
+                content,
+                date: new Date().toLocaleDateString('zh-TW')
+            });
+            localStorage.setItem('espanolNotes', JSON.stringify(notes));
+            document.getElementById('newNote').value = '';
+            renderNotes();
+        }
+
+        function renderNotes() {
+            const list = document.getElementById('notesList');
+            if (notes.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#aaa;">還沒有筆記，開始記錄吧！</p>';
+                return;
+            }
+            list.innerHTML = notes.map(note => `
+                <div class="note-item">
+                    <div>${note.content.replace(/\n/g, '<br>')}</div>
+                    <small style="color:#aaa;">${note.date}</small>
+                </div>
+            `).join('');
+        }
+
+        // 匯出匯入
+        function exportData() {
+            const data = {
+                vocabulary,
+                notes,
+                exportDate: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'mi-espanol-backup.json';
+            a.click();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.vocabulary) {
+                        vocabulary = data.vocabulary;
+                        saveVocabulary();
+                    }
+                    if (data.notes) {
+                        notes = data.notes;
+                        localStorage.setItem('espanolNotes', JSON.stringify(notes));
+                        renderNotes();
+                    }
+                    alert('資料匯入成功！');
+                    filterCards();
+                } catch (err) {
+                    alert('匯入失敗：檔案格式錯誤');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 啟動
+        init();
+    </script>
+</body>
+</html>
