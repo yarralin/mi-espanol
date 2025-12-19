@@ -10,12 +10,12 @@
             --card-bg: #ffffff;
             --text: #495057;
             --text-light: #6c757d;
-            --accent: #a8bcd1;        /* 莫蘭迪藍灰 */
+            --accent: #a8bcd1;
             --accent-hover: #8ea7c1;
             --border: #e9ecef;
             --shadow: rgba(0,0,0,0.06);
-            --soft-green: #b8c5bc;    /* 莫蘭迪霧綠 */
-            --soft-beige: #d9d0c7;    /* 莫蘭迪米 */
+            --soft-green: #b8c5bc;
+            --soft-beige: #d9d0c7;
         }
         body.dark {
             --bg: #1e2226;
@@ -121,11 +121,12 @@
         button:hover {
             background: var(--accent-hover);
         }
+        /* 閃卡 - 更小尺寸 */
         .flashcard {
             width: 100%;
-            max-width: 380px;
-            height: 260px;
-            margin: 30px auto;
+            max-width: 340px;  /* 縮小 */
+            height: 240px;
+            margin: 30px auto 20px;
             perspective: 1000px;
         }
         .card-inner {
@@ -149,7 +150,7 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            padding: 24px;
+            padding: 20px;
             border-radius: 16px;
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -159,17 +160,30 @@
             background: var(--soft-beige);
         }
         .card-face div:first-child {
-            font-size: 1.9rem;
+            font-size: 1.8rem;
             font-weight: 500;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .example {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             opacity: 0.75;
             font-style: italic;
-            margin-top: 12px;
+            margin-top: 10px;
             text-align: center;
-            line-height: 1.5;
+            line-height: 1.4;
+        }
+        .card-controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .card-controls button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 1rem;
+        }
+        .card-controls p {
+            margin: 12px 0 0;
+            color: var(--text-light);
         }
         .status-btns {
             display: flex;
@@ -226,8 +240,13 @@
             cursor: pointer;
         }
         @media (max-width: 600px) {
-            .flashcard { max-width: 150px; height: 120px; }
-            .card-face div:first-child { font-size: 1.6rem; }
+            .flashcard { 
+                max-width: 300px; 
+                height: 220px; 
+                margin: 20px auto 15px;
+            }
+            .card-face div:first-child { font-size: 1.5rem; }
+            .card-controls button { padding: 8px 16px; margin: 0 8px; }
             .controls { flex-direction: column; align-items: stretch; }
             main { padding: 0 16px; }
             .section { padding: 24px; }
@@ -277,10 +296,10 @@
                     <div class="card-face back" id="cardBack"></div>
                 </div>
             </div>
-            <div style="text-align:center; margin-top: 20px;">
+            <div class="card-controls">
                 <button id="prevCard">← 上一張</button>
                 <button id="nextCard">下一張 →</button>
-                <p id="progressText" style="margin: 16px 0; color: var(--text-light);">第 1 / 1 張</p>
+                <p id="progressText">第 1 / 1 張</p>
             </div>
             <div class="status-btns">
                 <button class="status-btn learning" data-status="learning">還在學</button>
@@ -289,6 +308,7 @@
             </div>
         </div>
 
+        <!-- 其他頁面內容保持不變 -->
         <div id="review" class="section">
             <h2 style="margin-top:0; color: var(--accent);">填空複習測驗</h2>
             <div id="quizQuestion" style="font-size:1.2rem; margin:30px 0; line-height:1.8;"></div>
@@ -332,8 +352,8 @@
     <div id="darkToggle">🌙</div>
 
     <script>
+        // 詞彙與對話資料（與之前完全相同）
         const initialVocabulary = [
-            // 問候語
             { es: "Hola", zh: "你好", category: "greetings", example: "Hola, ¿cómo estás?" },
             { es: "Buenos días", zh: "早安", category: "greetings", example: "Buenos días, señor." },
             { es: "Buenas tardes", zh: "午安", category: "greetings" },
@@ -342,8 +362,6 @@
             { es: "¿Cómo estás?", zh: "你好嗎？", category: "greetings" },
             { es: "Bien, gracias", zh: "很好，謝謝", category: "greetings" },
             { es: "¿Y tú?", zh: "你呢？", category: "greetings" },
-
-            // 日常對話
             { es: "Por favor", zh: "請", category: "daily" },
             { es: "Gracias", zh: "謝謝", category: "daily" },
             { es: "De nada", zh: "不客氣", category: "daily" },
@@ -352,8 +370,6 @@
             { es: "No", zh: "不", category: "daily" },
             { es: "Me llamo...", zh: "我叫...", category: "daily" },
             { es: "¿Cómo te llamas?", zh: "你叫什麼名字？", category: "daily" },
-
-            // 數字 1-10
             { es: "uno", zh: "一", category: "numbers" },
             { es: "dos", zh: "二", category: "numbers" },
             { es: "tres", zh: "三", category: "numbers" },
@@ -364,32 +380,24 @@
             { es: "ocho", zh: "八", category: "numbers" },
             { es: "nueve", zh: "九", category: "numbers" },
             { es: "diez", zh: "十", category: "numbers" },
-
-            // 顏色
             { es: "rojo", zh: "紅色", category: "colors" },
             { es: "azul", zh: "藍色", category: "colors" },
             { es: "verde", zh: "綠色", category: "colors" },
             { es: "amarillo", zh: "黃色", category: "colors" },
             { es: "negro", zh: "黑色", category: "colors" },
             { es: "blanco", zh: "白色", category: "colors" },
-
-            // 家庭成員
             { es: "padre", zh: "爸爸", category: "family" },
             { es: "madre", zh: "媽媽", category: "family" },
             { es: "hermano", zh: "哥哥/弟弟", category: "family" },
             { es: "hermana", zh: "姐姐/妹妹", category: "family" },
             { es: "abuelo", zh: "爺爺", category: "family" },
             { es: "abuela", zh: "奶奶", category: "family" },
-
-            // 食物
             { es: "agua", zh: "水", category: "food" },
             { es: "pan", zh: "麵包", category: "food" },
             { es: "leche", zh: "牛奶", category: "food" },
             { es: "arroz", zh: "米飯", category: "food" },
             { es: "carne", zh: "肉", category: "food" },
             { es: "fruta", zh: "水果", category: "food" },
-
-            // 旅行用語
             { es: "¿Dónde está...?", zh: "...在哪裡？", category: "travel" },
             { es: "el baño", zh: "廁所", category: "travel" },
             { es: "la estación", zh: "車站", category: "travel" },
@@ -571,6 +579,10 @@
             if (filteredCards.length === 0) return;
             currentCardIndex = (currentCardIndex + 1) % filteredCards.length;
             updateCurrentCard();
+        }
+
+        function updateProgress() {
+            document.getElementById('progressText').textContent = `第 ${currentCardIndex + 1} / ${filteredCards.length} 張`;
         }
 
         function saveVocabulary() {
