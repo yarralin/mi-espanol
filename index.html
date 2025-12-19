@@ -3,118 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Español - 我的西班牙文學習助手</title>
+    <title>Mi Español - 冰島風西班牙文學習</title>
     <style>
         :root {
-            --bg: #f5f5f5;
+            --bg: #f8f9fa;
             --card-bg: #ffffff;
-            --text: #2d3436;
-            --accent: #74b9ff;
-            --shadow: rgba(0,0,0,0.08);
+            --text: #495057;
+            --text-light: #6c757d;
+            --accent: #a8bcd1;        /* 莫蘭迪藍灰 */
+            --accent-hover: #8ea7c1;
+            --border: #e9ecef;
+            --shadow: rgba(0,0,0,0.06);
+            --soft-green: #b8c5bc;    /* 莫蘭迪霧綠 */
+            --soft-beige: #d9d0c7;    /* 莫蘭迪米 */
         }
         body.dark {
-            --bg: #2d3436;
-            --card-bg: #363e42;
-            --text: #dfe6e9;
-            --accent: #0984e3;
+            --bg: #1e2226;
+            --card-bg: #242a30;
+            --text: #ced4da;
+            --text-light: #adb5bd;
+            --accent: #7f9ab3;
+            --accent-hover: #94aecd;
+            --border: #343a40;
             --shadow: rgba(0,0,0,0.3);
+            --soft-green: #8a9a8f;
+            --soft-beige: #a89f94;
         }
         body {
             margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', -apple-system, Arial, sans-serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
-            transition: background 0.3s, color 0.3s;
+            line-height: 1.7;
+            transition: all 0.4s ease;
         }
         header {
             background: var(--card-bg);
-            padding: 1rem;
-            box-shadow: 0 2px 10px var(--shadow);
+            padding: 1.2rem;
+            box-shadow: 0 2px 12px var(--shadow);
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid var(--border);
         }
         h1 {
             margin: 0;
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             text-align: center;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: var(--accent);
         }
         nav {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 16px;
         }
         button.tab-btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             border: none;
             background: transparent;
-            color: var(--text);
-            border-bottom: 3px solid transparent;
+            color: var(--text-light);
+            border-bottom: 2px solid transparent;
             cursor: pointer;
             font-size: 1rem;
+            transition: all 0.3s;
         }
         button.tab-btn.active {
-            border-bottom: 3px solid var(--accent);
+            border-bottom: 2px solid var(--accent);
+            color: var(--accent);
+            font-weight: 500;
+        }
+        button.tab-btn:hover {
             color: var(--accent);
         }
         main {
             max-width: 900px;
-            margin: 20px auto;
+            margin: 30px auto;
             padding: 0 20px;
         }
         .section {
             display: none;
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px var(--shadow);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 6px 20px var(--shadow);
+            border: 1px solid var(--border);
         }
         .section.active {
             display: block;
         }
         .controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 24px;
+            align-items: center;
         }
         select, input, button {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
             font-size: 1rem;
+            background: var(--card-bg);
+            color: var(--text);
         }
         button {
             background: var(--accent);
             color: white;
             border: none;
             cursor: pointer;
+            transition: background 0.3s;
         }
         button:hover {
-            opacity: 0.9;
+            background: var(--accent-hover);
         }
         .flashcard {
             width: 100%;
-            max-width: 500px;
-            height: 300px;
+            max-width: 380px;
+            height: 260px;
             margin: 30px auto;
             perspective: 1000px;
-            cursor: pointer;
         }
         .card-inner {
             width: 100%;
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px var(--shadow);
+            transition: transform 0.7s ease;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px var(--shadow);
         }
         .card-inner.flipped {
             transform: rotateY(180deg);
@@ -128,83 +149,88 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 1.8rem;
-            text-align: center;
-        }
-        .front {
-            background: #ffeaa7;
+            padding: 24px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
         }
         .back {
-            background: #81ecec;
             transform: rotateY(180deg);
+            background: var(--soft-beige);
+        }
+        .card-face div:first-child {
+            font-size: 1.9rem;
+            font-weight: 500;
+            margin-bottom: 16px;
         }
         .example {
-            font-size: 1rem;
-            margin-top: 20px;
-            opacity: 0.8;
+            font-size: 0.95rem;
+            opacity: 0.75;
             font-style: italic;
+            margin-top: 12px;
+            text-align: center;
+            line-height: 1.5;
         }
         .status-btns {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 24px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .status-btn {
-            padding: 8px 16px;
+            padding: 8px 18px;
             font-size: 0.9rem;
+            opacity: 0.9;
         }
-        .learning { background: #fdcb6e; }
-        .review { background: #e17055; }
-        .mastered { background: #00b894; }
+        .learning { background: var(--soft-green); }
+        .review { background: #e8a87c; }
+        .mastered { background: #88a8b3; }
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
+            padding: 14px;
             text-align: left;
+            border-bottom: 1px solid var(--border);
         }
         th {
             background: var(--accent);
             color: white;
+            font-weight: 500;
         }
         .note-item {
             background: var(--bg);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #636e72;
-            font-size: 0.9rem;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent);
         }
         #darkToggle {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             background: var(--accent);
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 16px var(--shadow);
             z-index: 1000;
+            cursor: pointer;
         }
         @media (max-width: 600px) {
-            .flashcard { height: 250px; }
-            .card-face { font-size: 1.5rem; }
+            .flashcard { max-width: 320px; height: 240px; }
+            .card-face div:first-child { font-size: 1.6rem; }
             .controls { flex-direction: column; align-items: stretch; }
+            main { padding: 0 16px; }
+            .section { padding: 24px; }
         }
     </style>
 </head>
@@ -222,7 +248,6 @@
     </header>
 
     <main>
-        <!-- 閃卡學習 -->
         <div id="flashcards" class="section active">
             <div class="controls">
                 <select id="categorySelect">
@@ -252,69 +277,61 @@
                     <div class="card-face back" id="cardBack"></div>
                 </div>
             </div>
-            <div style="text-align:center;">
+            <div style="text-align:center; margin-top: 20px;">
                 <button id="prevCard">← 上一張</button>
                 <button id="nextCard">下一張 →</button>
-                <p id="progressText">第 1 / 1 張</p>
+                <p id="progressText" style="margin: 16px 0; color: var(--text-light);">第 1 / 1 張</p>
             </div>
-            <div class="status-btns" style="justify-content:center;">
+            <div class="status-btns">
                 <button class="status-btn learning" data-status="learning">還在學</button>
                 <button class="status-btn review" data-status="review">再複習</button>
                 <button class="status-btn mastered" data-status="mastered">已掌握</button>
             </div>
         </div>
 
-        <!-- 複習測驗 -->
         <div id="review" class="section">
-            <h2>填空複習測驗</h2>
-            <div id="quizQuestion"></div>
-            <input type="text" id="quizAnswer" placeholder="輸入你的答案" style="width:100%;max-width:400px;margin:20px 0;">
-            <button id="checkAnswer">檢查答案</button>
-            <p id="quizFeedback"></p>
-            <button id="nextQuiz">下一題</button>
+            <h2 style="margin-top:0; color: var(--accent);">填空複習測驗</h2>
+            <div id="quizQuestion" style="font-size:1.2rem; margin:30px 0; line-height:1.8;"></div>
+            <input type="text" id="quizAnswer" placeholder="輸入你的答案" style="width:100%;max-width:500px;">
+            <div style="margin:20px 0;">
+                <button id="checkAnswer">檢查答案</button>
+                <button id="nextQuiz" style="margin-left:12px;">下一題</button>
+            </div>
+            <p id="quizFeedback" style="font-size:1.1rem; font-weight:500;"></p>
         </div>
 
-        <!-- 動詞變化 -->
         <div id="conjugation" class="section">
-            <h2>動詞現在式變化查詢</h2>
-            <input type="text" id="verbInput" placeholder="輸入動詞原形（如 hablar, comer, vivir）">
-            <button id="conjugateBtn">查詢變化</button>
-            <div id="conjugationTable"></div>
+            <h2 style="color: var(--accent);">動詞現在式變化查詢</h2>
+            <input type="text" id="verbInput" placeholder="輸入動詞原形（如 hablar, comer, vivir）" style="width:100%;max-width:400px;">
+            <button id="conjugateBtn" style="margin-top:12px;">查詢變化</button>
+            <div id="conjugationTable" style="margin-top:20px;"></div>
         </div>
 
-        <!-- 對話練習 -->
         <div id="dialogues" class="section">
-            <h2>中西對照對話練習</h2>
-            <div id="dialogueList"></div>
+            <h2 style="color: var(--accent);">對話練習</h2>
+            <select id="dialogueSelect" style="margin-bottom:24px; padding:10px;"></select>
+            <div id="dialogueContent"></div>
         </div>
 
-        <!-- 我的筆記 -->
         <div id="notes" class="section">
-            <h2>我的學習筆記</h2>
-            <textarea id="newNote" placeholder="寫下你學到的單字、句子或文法筆記..." rows="4" style="width:100%;"></textarea>
-            <button id="saveNote">儲存筆記</button>
-            <div id="notesList"></div>
+            <h2 style="color: var(--accent);">我的學習筆記</h2>
+            <textarea id="newNote" placeholder="寫下你學到的單字、句子、文法或心得..." rows="5" style="width:100%;"></textarea>
+            <button id="saveNote" style="margin-top:12px;">儲存筆記</button>
+            <div id="notesList" style="margin-top:24px;"></div>
         </div>
 
-        <!-- 匯入匯出 -->
         <div id="importexport" class="section">
-            <h2>資料匯出與匯入</h2>
+            <h2 style="color: var(--accent);">資料匯入/匯出</h2>
             <button id="exportData">匯出所有資料（JSON）</button>
             <br><br>
             <input type="file" id="importFile" accept=".json">
             <button id="importData">匯入資料</button>
-            <p style="font-size:0.9rem;margin-top:20px;">匯出後可備份到雲端或轉移到其他裝置</p>
         </div>
     </main>
 
     <div id="darkToggle">🌙</div>
 
-    <footer>
-        Mi Español - 你的專屬西班牙文學習夥伴 | 所有資料儲存在本機瀏覽器
-    </footer>
-
     <script>
-        // 初始詞彙庫（初級）
         const initialVocabulary = [
             // 問候語
             { es: "Hola", zh: "你好", category: "greetings", example: "Hola, ¿cómo estás?" },
@@ -381,10 +398,9 @@
             { es: "¿Cuánto cuesta?", zh: "多少錢？", category: "travel" },
         ];
 
-        // 對話練習
         const dialogues = [
             {
-                title: "在咖啡廳點餐",
+                title: "咖啡廳點餐",
                 content: [
                     { es: "Buenos días. ¿Qué desea?", zh: "早安，您要點什麼？" },
                     { es: "Un café con leche, por favor.", zh: "一杯拿鐵，謝謝。" },
@@ -402,18 +418,26 @@
                     { es: "Soy de Taiwán.", zh: "我來自台灣。" },
                     { es: "¡Qué interesante! Bienvenido.", zh: "真有趣！歡迎。" }
                 ]
+            },
+            {
+                title: "問路",
+                content: [
+                    { es: "Perdón, ¿dónde está la estación de tren?", zh: "不好意思，火車站在哪裡？" },
+                    { es: "Siga recto y gire a la derecha en el semáforo.", zh: "直走，在紅綠燈右轉。" },
+                    { es: "¿Está lejos?", zh: "很遠嗎？" },
+                    { es: "No, está a unos diez minutos a pie.", zh: "不遠，走路約十分鐘。" },
+                    { es: "Muchas gracias.", zh: "非常謝謝。" }
+                ]
             }
         ];
 
-        // 主要資料儲存
         let vocabulary = [];
         let notes = [];
         let currentCardIndex = 0;
         let filteredCards = [];
+        let currentDialogueIndex = 0;
 
-        // 初始化
         function init() {
-            // 載入資料
             const savedVocab = localStorage.getItem('espanolVocabulary');
             const savedNotes = localStorage.getItem('espanolNotes');
             const savedDark = localStorage.getItem('espanolDarkMode');
@@ -428,16 +452,17 @@
 
             if (savedDark === 'true') {
                 document.body.classList.add('dark');
+                document.getElementById('darkToggle').textContent = '☀️';
             }
 
             setupEventListeners();
             switchTab('flashcards');
-            renderDialogues();
+            renderDialogueSelect();
+            renderCurrentDialogue();
             renderNotes();
         }
 
         function setupEventListeners() {
-            // 切換頁籤
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelector('.tab-btn.active').classList.remove('active');
@@ -446,16 +471,15 @@
                 });
             });
 
-            // 深色模式
             document.getElementById('darkToggle').addEventListener('click', () => {
                 document.body.classList.toggle('dark');
-                localStorage.setItem('espanolDarkMode', document.body.classList.contains('dark'));
-                document.getElementById('darkToggle').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+                const isDark = document.body.classList.contains('dark');
+                localStorage.setItem('espanolDarkMode', isDark);
+                document.getElementById('darkToggle').textContent = isDark ? '☀️' : '🌙';
             });
 
-            // 閃卡相關
-            const card = document.querySelector('.card-inner');
-            card.addEventListener('click', () => card.classList.toggle('flipped'));
+            const cardInner = document.querySelector('.card-inner');
+            cardInner.addEventListener('click', () => cardInner.classList.toggle('flipped'));
 
             document.getElementById('prevCard').addEventListener('click', prevCard);
             document.getElementById('nextCard').addEventListener('click', nextCard);
@@ -475,28 +499,22 @@
                 });
             });
 
-            // 動詞變化
             document.getElementById('conjugateBtn').addEventListener('click', conjugateVerb);
-
-            // 測驗
             document.getElementById('checkAnswer').addEventListener('click', checkQuiz);
             document.getElementById('nextQuiz').addEventListener('click', generateQuiz);
-
-            // 筆記
             document.getElementById('saveNote').addEventListener('click', saveNote);
-
-            // 匯出匯入
             document.getElementById('exportData').addEventListener('click', exportData);
-            document.getElementById('importData').addEventListener('click', () => {
-                document.getElementById('importFile').click();
-            });
+            document.getElementById('importData').addEventListener('click', () => document.getElementById('importFile').click());
             document.getElementById('importFile').addEventListener('change', importData);
+            document.getElementById('dialogueSelect').addEventListener('change', (e) => {
+                currentDialogueIndex = parseInt(e.target.value);
+                renderCurrentDialogue();
+            });
         }
 
         function switchTab(tab) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(tab).classList.add('active');
-
             if (tab === 'flashcards') filterCards();
             if (tab === 'review') generateQuiz();
         }
@@ -513,7 +531,6 @@
 
             currentCardIndex = 0;
             updateCurrentCard();
-            updateProgress();
         }
 
         function updateCurrentCard() {
@@ -541,12 +558,7 @@
             `;
 
             document.querySelector('.card-inner').classList.remove('flipped');
-            updateProgress();
-        }
-
-        function updateProgress() {
-            document.getElementById('progressText').textContent = 
-                `第 ${currentCardIndex + 1} / ${filteredCards.length} 張`;
+            document.getElementById('progressText').textContent = `第 ${currentCardIndex + 1} / ${filteredCards.length} 張`;
         }
 
         function prevCard() {
@@ -565,22 +577,15 @@
             localStorage.setItem('espanolVocabulary', JSON.stringify(vocabulary));
         }
 
-        // 動詞變化規則（規則動詞）
         function conjugateVerb() {
             const verb = document.getElementById('verbInput').value.trim().toLowerCase();
             if (!verb) return;
 
             let root, ending;
-            if (verb.endsWith('ar')) {
-                root = verb.slice(0, -2);
-                ending = 'ar';
-            } else if (verb.endsWith('er')) {
-                root = verb.slice(0, -2);
-                ending = 'er';
-            } else if (verb.endsWith('ir')) {
-                root = verb.slice(0, -2);
-                ending = 'ir';
-            } else {
+            if (verb.endsWith('ar')) { root = verb.slice(0, -2); ending = 'ar'; }
+            else if (verb.endsWith('er')) { root = verb.slice(0, -2); ending = 'er'; }
+            else if (verb.endsWith('ir')) { root = verb.slice(0, -2); ending = 'ir'; }
+            else {
                 document.getElementById('conjugationTable').innerHTML = '<p>請輸入規則動詞原形（-ar, -er, -ir）</p>';
                 return;
             }
@@ -592,76 +597,80 @@
             const pronouns = ['yo', 'tú', 'él/ella/usted', 'nosotros', 'vosotros', 'ellos/ellas/ustedes'];
 
             let table = '<table><tr><th>人稱</th><th>' + verb + ' (現在式)</th></tr>';
-            pronouns.forEach((pronoun, i) => {
-                table += `<tr><td>${pronoun}</td><td>${root}${conjugations[i]}</td></tr>`;
+            pronouns.forEach((p, i) => {
+                table += `<tr><td>${p}</td><td>${root}${conjugations[i]}</td></tr>`;
             });
             table += '</table>';
-
             document.getElementById('conjugationTable').innerHTML = table;
         }
 
-        // 測驗
         function generateQuiz() {
-            const reviewCards = vocabulary.filter(c => c.status === 'review' || c.status === 'learning');
+            const reviewCards = vocabulary.filter(c => c.status !== 'mastered');
             if (reviewCards.length === 0) {
-                document.getElementById('quizQuestion').textContent = '沒有需要複習的單字！繼續學習新單字吧～';
+                document.getElementById('quizQuestion').textContent = '太棒了！目前沒有需要複習的單字，继续學習新內容吧～';
+                document.getElementById('quizAnswer').style.display = 'none';
+                document.getElementById('checkAnswer').style.display = 'none';
+                document.getElementById('quizFeedback').textContent = '';
                 return;
             }
 
             const card = reviewCards[Math.floor(Math.random() * reviewCards.length)];
-            const sentence = card.example || `${card.es} 的意思是什麼？`;
-            document.getElementById('quizQuestion').innerHTML = 
-                sentence.replace(card.es, '_____') + '<br><br>請填入正確的西班牙文：';
+            const isEsToZh = Math.random() > 0.5;
+            const question = isEsToZh ? card.es : card.zh;
+            const answer = isEsToZh ? card.zh : card.es;
 
-            window.currentQuizCard = card;
+            let sentence = card.example || `請翻譯：${question}`;
+            document.getElementById('quizQuestion').innerHTML = 
+                `<strong>${sentence}</strong><br><br>請輸入對應的${isEsToZh ? '中文' : '西班牙文'}：`;
+
+            window.currentQuiz = { card, expected: answer.toLowerCase() };
             document.getElementById('quizAnswer').value = '';
+            document.getElementById('quizAnswer').style.display = 'block';
+            document.getElementById('checkAnswer').style.display = 'inline-block';
             document.getElementById('quizFeedback').textContent = '';
         }
 
         function checkQuiz() {
-            const answer = document.getElementById('quizAnswer').value.trim().toLowerCase();
-            const card = window.currentQuizCard;
+            const input = document.getElementById('quizAnswer').value.trim().toLowerCase();
+            const { card, expected } = window.currentQuiz;
             if (!card) return;
 
             card.attempts++;
-            if (answer === card.es.toLowerCase()) {
+            if (input === expected) {
                 card.correct++;
-                document.getElementById('quizFeedback').innerHTML = '<strong style="color:green;">正確！👍</strong>';
-                if (card.correct / card.attempts >= 0.8) {
-                    card.status = 'mastered';
-                }
+                document.getElementById('quizFeedback').innerHTML = '<span style="color:#88a8b3;">正確！✨</span>';
+                if (card.correct / card.attempts >= 0.8) card.status = 'mastered';
             } else {
                 document.getElementById('quizFeedback').innerHTML = 
-                    `<strong style="color:red;">不正確，正確答案是：${card.es}</strong>`;
+                    `<span style="color:#e8a87c;">不正確，正確答案：${expected}</span>`;
                 card.status = 'review';
             }
             saveVocabulary();
         }
 
-        // 對話練習
-        function renderDialogues() {
-            const container = document.getElementById('dialogueList');
-            container.innerHTML = dialogues.map(d => `
-                <div style="margin-bottom:30px;">
-                    <h3>${d.title}</h3>
-                    <table>
-                        ${d.content.map(line => 
-                            `<tr><td><strong>${line.es}</strong></td><td>${line.zh}</td></tr>`
-                        ).join('')}
-                    </table>
-                </div>
-            `).join('');
+        function renderDialogueSelect() {
+            const select = document.getElementById('dialogueSelect');
+            select.innerHTML = dialogues.map((d, i) => 
+                `<option value="${i}">${d.title}</option>`
+            ).join('');
         }
 
-        // 筆記
+        function renderCurrentDialogue() {
+            const dialogue = dialogues[currentDialogueIndex];
+            document.getElementById('dialogueContent').innerHTML = `
+                <h3 style="color:var(--accent); margin-bottom:20px;">${dialogue.title}</h3>
+                <table>
+                    ${dialogue.content.map(line => 
+                        `<tr><td><strong>${line.es}</strong></td><td>${line.zh}</td></tr>`
+                    ).join('')}
+                </table>
+            `;
+        }
+
         function saveNote() {
             const content = document.getElementById('newNote').value.trim();
             if (!content) return;
-
-            notes.unshift({
-                content,
-                date: new Date().toLocaleDateString('zh-TW')
-            });
+            notes.unshift({ content, date: new Date().toLocaleDateString('zh-TW') });
             localStorage.setItem('espanolNotes', JSON.stringify(notes));
             document.getElementById('newNote').value = '';
             renderNotes();
@@ -681,13 +690,8 @@
             `).join('');
         }
 
-        // 匯出匯入
         function exportData() {
-            const data = {
-                vocabulary,
-                notes,
-                exportDate: new Date().toISOString()
-            };
+            const data = { vocabulary, notes, exportDate: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -699,7 +703,6 @@
         function importData(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -722,7 +725,6 @@
             reader.readAsText(file);
         }
 
-        // 啟動
         init();
     </script>
 </body>
